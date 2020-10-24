@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
+	"hackerRank-Golang-test/driver"
+	models "hackerRank-Golang-test/models"
+	repository "hackerRank-Golang-test/repository"
+	post "hackerRank-Golang-test/repository/post"
+
 	"github.com/go-chi/chi"
-	"github.com/s1s1ty/go-mysql-crud/driver"
-	models "github.com/s1s1ty/go-mysql-crud/models"
-	repository "github.com/s1s1ty/go-mysql-crud/repository"
-	post "github.com/s1s1ty/go-mysql-crud/repository/post"
 )
 
 // NewPostHandler ...
@@ -25,7 +26,6 @@ type Post struct {
 	repo repository.PostRepo
 }
 
-// Fetch all post data
 func (p *Post) Fetch(w http.ResponseWriter, r *http.Request) {
 	payload, _ := p.repo.Fetch(r.Context(), 5)
 
@@ -84,7 +84,7 @@ func (p *Post) Delete(w http.ResponseWriter, r *http.Request) {
 	respondwithJSON(w, http.StatusMovedPermanently, map[string]string{"message": "Delete Successfully"})
 }
 
-// respondwithJSON write json response format
+//respondwithJSON write json response format
 func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 

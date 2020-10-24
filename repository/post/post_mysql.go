@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	models "github.com/s1s1ty/go-mysql-crud/models"
-	pRepo "github.com/s1s1ty/go-mysql-crud/repository"
+	"hackerRank-Golang-test/models"
+	pRepo "hackerRank-Golang-test/repository"
 )
 
 // NewSQLPostRepo retunrs implement of post repository interface
@@ -19,21 +19,24 @@ type mysqlPostRepo struct {
 	Conn *sql.DB
 }
 
-func (m *mysqlPostRepo) fetch(ctx context.Context, query string, args ...interface{}) ([]*models.Post, error) {
+func (m *mysqlPostRepo) fetch(ctx context.Context, query string, args ...interface{}) ([]*models.SearchRes, error) {
 	rows, err := m.Conn.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	payload := make([]*models.Post, 0)
+	payload := make([]*models.SearchRes, 0)
 	for rows.Next() {
-		data := new(models.Post)
+		data := new(models.SearchRes)
 
 		err := rows.Scan(
 			&data.ID,
+			&data.UserID,
 			&data.Title,
-			&data.Content,
+			&data.AlbumID,
+			&data.ThumbnailURL,
+			&data.URL,
 		)
 		if err != nil {
 			return nil, err
@@ -43,79 +46,8 @@ func (m *mysqlPostRepo) fetch(ctx context.Context, query string, args ...interfa
 	return payload, nil
 }
 
-func (m *mysqlPostRepo) Fetch(ctx context.Context, num int64) ([]*models.Post, error) {
-	query := "Select id, title, content From posts limit ?"
+func (m *mysqlPostRepo) Fetch(ctx context.Context, uid int, albumId int) ([]*models.SearchRes, error) {
+	query := "SELECT album.id, album.userId, album.title,photo.albumId,photo.thumbnailUrl ,photo.url from photo join album on photo.id = album.id where album.userId = ? and photo.albumId= ?"
 
-	return m.fetch(ctx, query, num)
-}
-
-func (m *mysqlPostRepo) GetByID(ctx context.Context, id int64) (*models.Post, error) {
-	query := "Select id, title, content From posts where id=?"
-
-	rows, err := m.fetch(ctx, query, id)
-	if err != nil {
-		return nil, err
-	}
-
-	payload := &models.Post{}
-	if len(rows) > 0 {
-		payload = rows[0]
-	} else {
-		return nil, models.ErrNotFound
-	}
-
-	return payload, nil
-}
-
-func (m *mysqlPostRepo) Create(ctx context.Context, p *models.Post) (int64, error) {
-	query := "Insert posts SET title=?, content=?"
-
-	stmt, err := m.Conn.PrepareContext(ctx, query)
-	if err != nil {
-		return -1, err
-	}
-
-	res, err := stmt.ExecContext(ctx, p.Title, p.Content)
-	defer stmt.Close()
-
-	if err != nil {
-		return -1, err
-	}
-
-	return res.LastInsertId()
-}
-
-func (m *mysqlPostRepo) Update(ctx context.Context, p *models.Post) (*models.Post, error) {
-	query := "Update posts set title=?, content=? where id=?"
-
-	stmt, err := m.Conn.PrepareContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	_, err = stmt.ExecContext(
-		ctx,
-		p.Title,
-		p.Content,
-		p.ID,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-
-	return p, nil
-}
-
-func (m *mysqlPostRepo) Delete(ctx context.Context, id int64) (bool, error) {
-	query := "Delete From posts Where id=?"
-
-	stmt, err := m.Conn.PrepareContext(ctx, query)
-	if err != nil {
-		return false, err
-	}
-	_, err = stmt.ExecContext(ctx, id)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
+	return m.fetch(ctx, query, uid, albumId)
 }

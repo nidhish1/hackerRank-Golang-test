@@ -1,14 +1,17 @@
 package main
 
+//hackerRank-Golang-test
 import (
 	"fmt"
 	"net/http"
 	"os"
 
+	"hackerRank-Golang-test/driver"
+
+	ph "hackerRank-Golang-test/handler/http"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/s1s1ty/go-mysql-crud/driver"
-	ph "github.com/s1s1ty/go-mysql-crud/handler/http"
 )
 
 func main() {
@@ -39,11 +42,14 @@ func main() {
 // A completely separate router for posts routes
 func postRouter(pHandler *ph.Post) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", pHandler.Fetch)
-	r.Get("/{id:[0-9]+}", pHandler.GetByID)
-	r.Post("/", pHandler.Create)
-	r.Put("/{id:[0-9]+}", pHandler.Update)
-	r.Delete("/{id:[0-9]+}", pHandler.Delete)
+
+	r.Get("/search", pHandler.Search)
+
+	// r.Get("/", pHandler.Search)
+	// r.Get("/{id:[0-9]+}", pHandler.GetByID)
+	// r.Post("/", pHandler.Create)
+	// r.Put("/{id:[0-9]+}", pHandler.Update)
+	// r.Delete("/{id:[0-9]+}", pHandler.Delete)
 
 	return r
 }

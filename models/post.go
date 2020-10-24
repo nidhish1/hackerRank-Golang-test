@@ -17,8 +17,16 @@ type Album struct {
 
 type Photo struct {
 	ID           int64  `json:"id"`
-	UserID       string `json:"albumId"`
-	PhotoID      string `json:"photoId"`
+	AlbumID      string `json:"albumId"`
+	Title        string `json:"title"`
+	URL          string `json:"url"`
+	ThumbnailURL string `json:"thumbnailUrl"`
+}
+
+type SearchRes struct {
+	ID           int64  `json:"id"`
+	UserID       string `json:"userId"`
+	AlbumID      string `json:"albumId"`
 	Title        string `json:"title"`
 	URL          string `json:"url"`
 	ThumbnailURL string `json:"thumbnailUrl"`
