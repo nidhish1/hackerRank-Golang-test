@@ -3,10 +3,13 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"hackerRank-Golang-test/driver"
 	repository "hackerRank-Golang-test/repository"
 	post "hackerRank-Golang-test/repository/post"
+
+	"github.com/go-chi/chi"
 )
 
 // NewPostHandler ...
@@ -22,10 +25,10 @@ type Post struct {
 }
 
 func (p *Post) Search(w http.ResponseWriter, r *http.Request) {
-	//uid, _ := strconv.Atoi(chi.URLParam(r, "id"))
-	//albumId, _ := strconv.Atoi(chi.URLParam(r, "aid"))
+	uid, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	albumId, _ := strconv.Atoi(chi.URLParam(r, "aid"))
 
-	payload, err := p.repo.Fetch(r.Context(), 1, 1)
+	payload, err := p.repo.Fetch(r.Context(), uid, albumId)
 
 	if err != nil {
 		respondWithError(w, http.StatusNoContent, "Content not found")
