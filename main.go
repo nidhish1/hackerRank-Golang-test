@@ -43,13 +43,7 @@ func main() {
 func postRouter(pHandler *ph.Post) http.Handler {
 	r := chi.NewRouter()
 
-	r.Get("/search", pHandler.Search)
-
-	// r.Get("/", pHandler.Search)
-	// r.Get("/{id:[0-9]+}", pHandler.GetByID)
-	// r.Post("/", pHandler.Create)
-	// r.Put("/{id:[0-9]+}", pHandler.Update)
-	// r.Delete("/{id:[0-9]+}", pHandler.Delete)
+	r.Get("/search/{uid:[0-9]+}/{aid:[0-9]+}", pHandler.Search)
 
 	return r
 }
