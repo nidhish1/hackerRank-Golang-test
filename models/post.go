@@ -24,7 +24,6 @@ type Photo struct {
 }
 
 type SearchRes struct {
-	ID           int64  `json:"id"`
 	UserID       string `json:"userId"`
 	AlbumID      string `json:"albumId"`
 	Title        string `json:"title"`

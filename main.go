@@ -32,7 +32,7 @@ func main() {
 
 	pHandler := ph.NewPostHandler(connection)
 	r.Route("/", func(rt chi.Router) {
-		rt.Mount("/posts", postRouter(pHandler))
+		rt.Mount("/", postRouter(pHandler))
 	})
 
 	fmt.Println("Server listen at :8005")
@@ -44,6 +44,10 @@ func postRouter(pHandler *ph.Post) http.Handler {
 	r := chi.NewRouter()
 
 	r.Get("/search/{uid:[0-9]+}/{aid:[0-9]+}", pHandler.Search)
+
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(""))
+	})
 
 	return r
 }

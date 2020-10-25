@@ -26,12 +26,11 @@ func (m *mysqlPostRepo) fetch(ctx context.Context, query string, args ...interfa
 	}
 	defer rows.Close()
 
-	payload := make([]*models.SearchRes, 0)
+	payload := make([]*models.SearchRes, 10)
 	for rows.Next() {
 		data := new(models.SearchRes)
 
 		err := rows.Scan(
-			&data.ID,
 			&data.UserID,
 			&data.Title,
 			&data.AlbumID,
@@ -47,7 +46,7 @@ func (m *mysqlPostRepo) fetch(ctx context.Context, query string, args ...interfa
 }
 
 func (m *mysqlPostRepo) Fetch(ctx context.Context, uid int, albumId int) ([]*models.SearchRes, error) {
-	query := "SELECT album.id, album.userId, album.title,photo.albumId,photo.thumbnailUrl ,photo.url from photo join album on photo.id = album.id where album.userId = ? and photo.albumId= ?"
+	query := "SELECT  album.userId, album.title,photo.albumId, photo.thumbnailUrl ,photo.url from photo join album on photo.id = album.id where album.userId = ? and photo.albumId= ?"
 
 	return m.fetch(ctx, query, uid, albumId)
 }
